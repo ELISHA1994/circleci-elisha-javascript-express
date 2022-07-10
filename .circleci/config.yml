@@ -9,13 +9,6 @@ workflows:
     jobs:
       - my_job
 
-commands:
-  print_pipeline_id:
-    parameters:
-      id:
-        type: string
-    steps:
-      - run: echo << parameters.id >>
 
 
 jobs:
@@ -57,6 +50,9 @@ jobs:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      - print_pipeline_id:
-          id: << pipeline.id >>
+      - run: return 1
+      - run:
+          name: on error
+          command: echo "Hello Error"
+          when: on_fail
 
