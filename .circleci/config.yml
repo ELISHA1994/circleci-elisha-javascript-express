@@ -5,12 +5,18 @@ workflows:
   build:
     jobs:
       - build
-  my-workflow:
+  my_workflow:
     jobs:
-      - save_hello_world_output
-      - print_output_file:
-          requires:
-            - save_hello_world_output
+      - my_job
+
+commands:
+  print_pipeline_id:
+    parameters:
+      id:
+        type: string
+    steps:
+      - run: echo << parameters.id >>
+
 
 jobs:
   build:
@@ -47,20 +53,10 @@ jobs:
       - store_test_results:
           path: test-results.xml
 
-  save_hello_world_output:
+  my_job:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      - run: echo "hello world" > ~/output.txt
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - output.txt
+      - print_pipeline_id:
+          id: << pipeline.id >>
 
-  print_output_file:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - attach_workspace:
-          at: ~/
-      - run: cat ~/output.txt
